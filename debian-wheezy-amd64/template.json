@@ -1,0 +1,65 @@
+{
+  "builders": [
+    {
+      "boot_command": [
+        "<esc><wait>",
+        "install <wait>",
+        "preseed/url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed-vagrant.cfg <wait>",
+        "debian-installer=en_US <wait>",
+        "auto <wait>",
+        "locale=en_US <wait>",
+        "kbd-chooser/method=us <wait>",
+        "netcfg/get_hostname={{ .Name }} <wait>",
+        "netcfg/get_domain=vagrantup.com <wait>",
+        "fb=false <wait>",
+        "debconf/frontend=noninteractive <wait>",
+        "console-setup/ask_detect=false <wait>",
+        "console-keymaps-at/keymap=us <wait>",
+        "keyboard-configuration/xkb-keymap=us <wait>",
+        "<enter><wait>"
+      ],
+      "disk_size": 10140,
+      "guest_os_type": "Debian_64",
+      "headless": true,
+      "http_directory": "http",
+      "iso_checksum": "2ed8a7ec7ef3abe59b825f7c8d7176322b87341800277c70dce807c5c9ab1c8f18a9e677766d2a12df334024fe27580cf208a305afaf09e96cfe9e762e4f94df",
+      "iso_checksum_type": "sha512",
+      "iso_url": "http://cdimage.debian.org/debian-cd/7.3.0/amd64/iso-cd/debian-7.3.0-amd64-netinst.iso",
+      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -hP now",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "600s",
+      "type": "virtualbox-iso"
+    }
+  ],
+  "provisioners": [
+    {
+      "execute_command": "echo 'vagrant' | sudo -S bash {{.Path}}",
+      "only": [
+        "virtualbox-iso"
+      ],
+      "script": "scripts/vagrant.sh",
+      "type": "shell"
+    },
+    {
+      "script": "scripts/base.sh",
+      "type": "shell"
+    },
+    {
+      "only": [
+        "virtualbox-iso"
+      ],
+      "script": "scripts/virtualbox.sh",
+      "type": "shell"
+    }
+  ],
+  "post-processors": [
+    {
+      "only": [
+        "virtualbox-iso"
+      ],
+      "type": "vagrant"
+    }
+  ]
+}
+
